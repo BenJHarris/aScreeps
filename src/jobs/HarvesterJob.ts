@@ -1,7 +1,7 @@
-import {Job, JobType} from './Job';
+import { Job, JobMode, JobType } from './Job';
 
 export class HarvesterJob extends Job {
-    constructor() {
-        super(JobType.Harvester);
+    constructor(mode: JobMode) {
+        super(JobType.Harvester, mode);
     }
 }

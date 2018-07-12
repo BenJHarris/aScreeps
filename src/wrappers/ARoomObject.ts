@@ -10,6 +10,7 @@ export class ARoomObject {
     constructor(roomObject: RoomObject) {
         this.roomObject = roomObject;
         this.pos = new ARoomPosition(this.roomObject.pos);
-        this.room = this.roomObject.room === undefined ? undefined : new ARoom(this.roomObject.room);
+        this.room = this.roomObject.room ===
+            undefined ? undefined : AGAME.getRoomByName(this.roomObject.room.name);
     }
 }

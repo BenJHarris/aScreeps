@@ -6,5 +6,6 @@ import { AGame } from 'wrappers/AGame';
 export const loop = ErrorMapper.wrapLoop(() => {
   console.log(`Current game tick is ${Game.time}`);
 
-  const aGame = new AGame(Game);
+  AGAME = new AGame(Game);
+  AGAME.run();
 });
