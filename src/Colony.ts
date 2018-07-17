@@ -1,6 +1,6 @@
 import { ColonyMemory } from "Colony";
 import { Job, JobMemory } from "Job";
-import { HomeRoom, HomeRoomMemory } from "./HomeRoom";
+import { HomeRoom, HomeRoomMemory } from "HomeRoom";
 
 export class Colony {
 

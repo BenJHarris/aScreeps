@@ -1,4 +1,4 @@
-import { Harvester } from './Harvester';
+import { Harvester } from 'Harvester';
 import { Logger } from 'Logger';
 
 export class Job {
