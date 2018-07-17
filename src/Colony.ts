@@ -27,6 +27,10 @@ export class Colony {
 
 }
 
+export enum ColonyMode {
+
+}
+
 export interface ColonyMemory {
     jobs: JobMemory[];
     homeRoom: HomeRoomMemory;
