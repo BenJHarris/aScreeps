@@ -1,11 +1,11 @@
-import { HomeRoomMemory } from "HomeRoom";
-import { Dictionary } from "lodash";
-import { OwnableRoom } from "OwnableRoom";
+import { HomeRoomMemory } from 'HomeRoom';
+import { Dictionary } from 'lodash';
+import { OwnableRoom } from 'OwnableRoom';
 
 export class HomeRoom extends OwnableRoom {
 
     private roomName: string;
-    public effectiveLevel: number
+    public effectiveLevel: number;
     public myStructures: Dictionary<Structure[]>;
 
     constructor(room: Room) {
@@ -16,7 +16,8 @@ export class HomeRoom extends OwnableRoom {
     }
 
     private calcEffectiveLevel(): number {
-        const diff = this.myStructures[STRUCTURE_EXTENSION].length === CONTROLLER_STRUCTURES[STRUCTURE_EXTENSION][this.level] ? 0 : 1;
+        const diff = this.myStructures[STRUCTURE_EXTENSION].length ===
+            CONTROLLER_STRUCTURES[STRUCTURE_EXTENSION][this.level] ? 0 : 1;
         return this.level - diff;
     }
 
@@ -26,11 +27,11 @@ export class HomeRoom extends OwnableRoom {
             if (key) {
                 dict[key] = _.filter(value, (v) => {
                     if (v instanceof OwnedStructure) {
-                        return v.my
+                        return v.my;
                     } else {
                         return false;
                     }
-                })
+                });
             }
         });
         return dict;

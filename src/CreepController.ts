@@ -1,9 +1,11 @@
 export class CreepController {
 
     private creep: Creep;
+    public pos: RoomPosition;
 
     constructor(creep: Creep) {
         this.creep = creep;
+        this.pos = creep.pos;
     }
 
     public moveTo(rp: RoomPosition): CreepMoveReturnCode | ERR_NO_PATH | ERR_INVALID_TARGET | ERR_NOT_FOUND {
@@ -17,5 +19,4 @@ export class CreepController {
     public transfer(target: Creep|Structure, resourceType: ResourceConstant, amount?: number): ScreepsReturnCode {
         return this.creep.transfer(target, resourceType, amount);
     }
-
 }

@@ -1,59 +1,47 @@
-import { Harvester } from 'Harvester';
+import { Harvester, HarvesterMemory } from 'Harvester';
 import { Logger } from 'Logger';
+import { Role, RoleMemory, RoleType } from 'Role';
 
 export class Job {
-    private id: number;
+    private roleType: RoleType;
     private creepName?: string;
-    private type: RoleType;
-    private mode: number;
-    private stage: number;
+    private role?: Role;
 
-    constructor(id: number, type: RoleType, mode: number, stage: number, creepName?: string) {
-        this.id = id;
-        this.type = type;
-        this.mode = mode;
-        this.stage = stage;
+    constructor(roleType: RoleType, role?: Role, creepName?: string) {
+        this.roleType = roleType;
+        this.role = role;
         this.creepName = creepName;
     }
 
     public run(): void {
-        if (this.creepName === undefined) return;
-        const creep = Game.creeps[this.creepName];
-        if (creep === undefined) return;
-        if (this.type === RoleType.harvester) {
-            Harvester.run(creep, this.mode, this.stage);
-        } else {
-            Logger.log(`Job ${this.id} has an undefined state`, 3);
-        }
+        console.log('job running - keks');
     }
 
     public save(): JobMemory {
         return {
-            id: this.id,
-            type: this.type,
-            mode: this.mode,
-            stage: this.stage,
-            creepName: this.creepName
+            creepName: this.creepName,
+            role: this.role ? this.role.save() : undefined,
+            roleType: this.roleType
         };
     }
 
     public static load(jobMemory: JobMemory): Job {
-        return new Job(jobMemory.id,
-            jobMemory.type,
-            jobMemory.mode,
-            jobMemory.stage,
+        return new Job(jobMemory.roleType,
+            jobMemory.role ? loadRole(jobMemory.roleType, jobMemory.role) : undefined,
             jobMemory.creepName);
     }
 }
 
-export interface JobMemory {
-    id: number;
-    type: RoleType;
-    mode: number;
-    stage: number;
-    creepName?: string;
+function loadRole(type: RoleType, roleMemory: RoleMemory): Role {
+    if (type === RoleType.harvester) {
+        return Harvester.load(roleMemory as HarvesterMemory);
+    } else {
+        throw new Error('could not load role');
+    }
 }
 
-export enum RoleType {
-    harvester
+export interface JobMemory {
+    roleType: RoleType;
+    role?: RoleMemory;
+    creepName?: string;
 }

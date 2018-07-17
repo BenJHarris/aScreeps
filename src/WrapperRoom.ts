@@ -1,4 +1,4 @@
-import { Dictionary } from "lodash";
+import { Dictionary } from 'lodash';
 
 export class WrapperRoom {
     private room: Room;

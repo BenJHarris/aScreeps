@@ -12,7 +12,7 @@ export class Logger {
         } else if (level === LogLevel.warn) {
             this.logWarn(message);
         } else if (level === LogLevel.critical) {
-            this.logCritical
+            this.logCritical(message);
         } else {
             throw new Error('Unkown logging type');
         }

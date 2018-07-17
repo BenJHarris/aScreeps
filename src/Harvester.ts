@@ -1,30 +1,54 @@
-import { Logger } from "Logger";
+import { EnergyRole } from 'EnergyRole';
+import { RoleMemory, RoleModeBody, RoleType } from 'Role';
 
-export class Harvester {
+const bodyNormal: RoleModeBody = {
+    1: [WORK, CARRY, MOVE, MOVE],
+    2: [WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE]
+};
 
-    public static getBodyForMode(level: number)  {
+export class Harvester extends EnergyRole {
+    private source: Source;
 
+    constructor(creep: Creep, mode: number, stage: number, source: Source) {
+        super(creep, mode, stage, RoleType.harvester);
+        this.source = source;
     }
 
-    public static run(creep: Creep, mode: HarvesterMode, stage: HarvesterStage): void {
+    public run(): void {
+        // todo
+    }
 
-        if (mode === HarvesterMode.Standard) {
-            this.runModeNormal(stage);
+    public static getBodyForMode(mode: HarvesterMode, level: number): BodyPartConstant[] {
+        if (mode === HarvesterMode.Normal) {
+            return bodyNormal[level];
         } else {
-            Logger.log(`Unknown mode on harvester ${creep.name}`, 3);
+            throw new Error('undefined mode');
         }
-
     }
 
-    private static runModeNormal(stage: number) {
+    // save and load
 
+    public save(): HarvesterMemory {
+        return {
+            creepName: this.creepName,
+            mode: this.mode,
+            source: this.source.id,
+            stage: this.stage,
+            type: RoleType.harvester
+        };
+    }
+
+    public static load(memory: HarvesterMemory): Harvester {
+        const creep = Game.creeps[memory.creepName];
+        const source = Game.getObjectById(memory.source) as Source;
+        return new Harvester(creep, memory.mode, memory.stage, source);
     }
 }
 
 export enum HarvesterMode {
-    Standard
+    Normal
 }
 
-export enum HarvesterStage {
-
+export interface HarvesterMemory extends RoleMemory {
+    source: string;
 }

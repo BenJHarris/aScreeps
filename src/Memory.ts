@@ -1,4 +1,4 @@
-import { EmpireMemory } from "Empire";
+import { EmpireMemory } from 'Empire';
 
 declare global {
     interface Memory {
