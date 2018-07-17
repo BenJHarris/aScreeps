@@ -1,8 +1,8 @@
-import { HomeRoomMemory } from "./HomeRoom";
-import { WrapperRoom } from "./WrapperRoom";
+import { HomeRoomMemory } from "HomeRoom";
 import { Dictionary } from "lodash";
+import { OwnableRoom } from "OwnableRoom";
 
-export class HomeRoom extends WrapperRoom {
+export class HomeRoom extends OwnableRoom {
 
     private roomName: string;
     public effectiveLevel: number
@@ -16,8 +16,8 @@ export class HomeRoom extends WrapperRoom {
     }
 
     private calcEffectiveLevel(): number {
-        //todo
-        return 1;
+        const diff = this.myStructures[STRUCTURE_EXTENSION].length === CONTROLLER_STRUCTURES[STRUCTURE_EXTENSION][this.level] ? 0 : 1;
+        return this.level - diff;
     }
 
     private findMyStructures(): Dictionary<Structure[]> {

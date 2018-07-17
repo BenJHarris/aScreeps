@@ -11,4 +11,28 @@ export const loop = ErrorMapper.wrapLoop(() => {
 
   const homeRoom = new HomeRoom(room);
   _.forEach(homeRoom.myStructures, (s) => console.log(s));
+
+
+  const spawn = Game.spawns['Spawn1'];
+  spawn.spawnCreep([MOVE, WORK, CARRY], 'c1', {memory: {
+    'role': 'harvester'
+  }});
+
+  const creep = Game.creeps['c1'];
+  const source = creep.room.find(FIND_SOURCES)[0];
+
+  if (creep.carry.energy < creep.carryCapacity) {
+    if (creep.pos.inRangeTo(source, 1)) {
+      creep.harvest(source);
+    } else {
+      creep.moveTo(source);
+    }
+  } else {
+    if (creep.pos.inRangeTo(spawn, 1)) {
+      creep.transfer(spawn, RESOURCE_ENERGY);
+    } else {
+      creep.moveTo(spawn);
+    }
+  }
+
 });
