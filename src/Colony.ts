@@ -33,6 +33,15 @@ export class Colony {
     }
 
     public run(): void {
+
+        // process spawn queue
+        if (this.avilableSpawns.length > 0) {
+            _.forEach(      , (sr) => {
+
+            });
+        }
+
+        // if role has creep, run role - otherwise add to spawn queue
         _.forEach(this.roles, (r) => {
             if (!r.hasCreep()) {
                 this.spawnQueue.push(new SpawnRequest(r.id, r.getBody(this.level)));
