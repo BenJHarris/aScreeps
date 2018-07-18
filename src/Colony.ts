@@ -33,7 +33,13 @@ export class Colony {
     }
 
     public run(): void {
-        _.forEach(this.roles, (r) => r.run());
+        _.forEach(this.roles, (r) => {
+            if (!r.hasCreep()) {
+                this.spawnQueue.push(new SpawnRequest(r.id, r.getBody(this.level)));
+            } else {
+                r.run();
+            }
+        });
     }
 
     public refresh(): void {
