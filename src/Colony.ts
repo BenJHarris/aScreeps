@@ -1,23 +1,27 @@
 import { ColonyMemory } from 'Colony';
-import { HomeRoom, HomeRoomMemory } from 'HomeRoom';
-import { RoleType, Role, RoleMemory } from 'Role';
-import { SpawnRequest } from 'SpawnRequest';
 import { Harvester, HarvesterMemory } from 'Harvester';
+import { HomeRoom, HomeRoomMemory } from 'HomeRoom';
+import { Role, RoleMemory, RoleType } from 'Role';
+import { SpawnRequest } from 'SpawnRequest';
 
 export class Colony {
 
+    private id: number;
     private roles: Role[];
     private homeRoom: HomeRoom;
     private level: number;
     private currentRoleId: number;
     private spawnQueue: SpawnRequest[];
     private avilableSpawns: StructureSpawn[];
+    private availableEnergy: number;
 
-    constructor(homeRoom: HomeRoom, currentRoleId: number, roles?: Role[], spawnQueue?: SpawnRequest[]) {
+    constructor(id: number, homeRoom: HomeRoom, currentRoleId: number, roles?: Role[], spawnQueue?: SpawnRequest[]) {
+        this.id = id;
         this.homeRoom = homeRoom;
         this.level = homeRoom.level;
         this.currentRoleId = currentRoleId;
         this.avilableSpawns = homeRoom.availableSpawns;
+        this.availableEnergy = homeRoom.availableEnergy;
 
         if (roles === undefined) {
             this.roles = this.createRolesFromConfig(colonyConfig[this.level].roles);
@@ -26,7 +30,7 @@ export class Colony {
         }
 
         if (spawnQueue === undefined) {
-            this.spawnQueue = this.createSpawnQueue();
+            this.spawnQueue = [];
         } else {
             this.spawnQueue = spawnQueue;
         }
@@ -34,17 +38,32 @@ export class Colony {
 
     public run(): void {
 
-        // process spawn queue
-        if (this.avilableSpawns.length > 0) {
-            _.forEach(      , (sr) => {
+        console.log(this.spawnQueue);
 
-            });
+        // process spawn queue
+        if (this.spawnQueue.length > 0) {
+            if (this.spawnQueue[0].requiredEnergy <= this.availableEnergy) {
+                _.forEach(this.avilableSpawns, (s) => {
+                    const sr = this.spawnQueue[0];
+                    if (sr.requiredEnergy < this.availableEnergy) {
+                        const creepName = `${this.id}-${sr.jobId}`;
+                        s.spawnCreep(sr.body, creepName);
+                        this.spawnQueue.shift();
+
+                        const role = this.getRoleById(sr.jobId);
+                        if (role !== undefined) {
+                            role.setCreep(creepName);
+                        }
+                    }
+                });
+            }
         }
 
         // if role has creep, run role - otherwise add to spawn queue
         _.forEach(this.roles, (r) => {
-            if (!r.hasCreep()) {
+            if (!r.hasCreep() && !r.creepRequested) {
                 this.spawnQueue.push(new SpawnRequest(r.id, r.getBody(this.level)));
+                r.creepRequested = true;
             } else {
                 r.run();
             }
@@ -54,33 +73,37 @@ export class Colony {
     public refresh(): void {
         this.homeRoom = this.homeRoom.refresh();
         this.level = this.homeRoom.level;
+        this.level = this.homeRoom.level;
+        this.avilableSpawns = this.homeRoom.availableSpawns;
+        this.availableEnergy = this.homeRoom.availableEnergy;
     }
 
     // save and load
 
     public save(): ColonyMemory {
         return {
+            currentJobId: this.currentRoleId,
             homeRoom: this.homeRoom.save(),
-            roles: _.map(this.roles, (r) => r.save()),
-            currentJobId: this.currentRoleId
+            id: this.id,
+            roles: _.map(this.roles, (r) => r.save())
         };
     }
 
     public static load(colonyMemory: ColonyMemory): Colony {
         const jobs = _.map(colonyMemory.roles, (r) => {
             if (r.type === RoleType.harvester) {
-                return Harvester.load(r as HarvesterMemory)
+                return Harvester.load(r as HarvesterMemory);
             } else {
                 throw new Error(`Unknown role type ${r.type}`);
             }
         });
         const homeRoom = HomeRoom.load(colonyMemory.homeRoom);
-        return new Colony(homeRoom, colonyMemory.currentJobId, jobs);
+        return new Colony(colonyMemory.id, homeRoom, colonyMemory.currentJobId, jobs);
     }
 
-    public static init(homeRoom: HomeRoom): Colony {
+    public static init(id: number, homeRoom: HomeRoom): Colony {
         const level = homeRoom.effectiveLevel;
-        return new Colony(homeRoom, 0);
+        return new Colony(id, homeRoom, 0);
     }
 
     private createRolesFromConfig(rc: RoleConfig): Role[] {
@@ -98,28 +121,23 @@ export class Colony {
     }
 
     private createRoleByType(rt: RoleType): Role {
-        let role: Role;
         if (rt === RoleType.harvester) {
             const source = this.homeRoom.sources[0];
-            return Harvester.create(this.currentRoleId++, source)
+            return Harvester.create(this.currentRoleId++, source);
         } else {
             throw new Error(`unkown role type ${rt}`);
         }
     }
 
-    private createSpawnQueue(): SpawnRequest[] {
-        const spawnRequests: SpawnRequest[] = [];
-        _.forEach(this.roles, (r) => {
-            if (!r.hasCreep()) spawnRequests.push(new SpawnRequest(r.id, r.getBody(this.level)));
-        })
-        return spawnRequests;
+    private getRoleById(id: number): Role | undefined {
+        return _.find(this.roles, (r) => r.id === id);
     }
 }
 
 const colonyConfig: ColonyConfig = {
     1: {
         roles: {
-            harvester: 4,
+            harvester: 4
         }
     },
     2: {
@@ -159,6 +177,7 @@ export enum ColonyMode {
 }
 
 export interface ColonyMemory {
+    id: number;
     roles: RoleMemory[];
     homeRoom: HomeRoomMemory;
     currentJobId: number;

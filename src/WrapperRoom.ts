@@ -5,10 +5,12 @@ export class WrapperRoom {
     public structures: Dictionary<Structure[]>;
     public name: string;
     public sources: Source[];
+    public availableEnergy: number;
 
     constructor(room: Room) {
         this.room = room;
         this.name = room.name;
+        this.availableEnergy = room.energyAvailable;
         this.structures = this.findStructures();
         this.sources = this.findSources();
     }

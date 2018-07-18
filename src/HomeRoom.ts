@@ -48,7 +48,7 @@ export class HomeRoom extends OwnableRoom {
     private findAvailableSpawns(): StructureSpawn[] {
         return _.filter(this.structures[STRUCTURE_SPAWN] as StructureSpawn[], (s) => {
             return !s.spawning;
-        })
+        });
     }
 
     // save and load
