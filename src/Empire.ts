@@ -13,6 +13,10 @@ export class Empire {
         _.forEach(this.colonies, (c) => c.run());
     }
 
+    public refresh(): void {
+        _.forEach(this.colonies, (c) => c.refresh())
+    }
+
     public save(): EmpireMemory {
         return {
             colonies: _.map(this.colonies, (c) => c.save())

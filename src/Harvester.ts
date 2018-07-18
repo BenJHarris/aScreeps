@@ -1,16 +1,22 @@
 import { EnergyRole } from 'EnergyRole';
 import { RoleMemory, RoleModeBody, RoleType } from 'Role';
 
-const bodyNormal: RoleModeBody = {
-    1: [WORK, CARRY, MOVE, MOVE],
-    2: [WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE]
-};
-
 export class Harvester extends EnergyRole {
     private source: Source;
 
-    constructor(creep: Creep, mode: number, stage: number, source: Source) {
-        super(creep, mode, stage, RoleType.harvester);
+    private static levelBodies: RoleModeBody = {
+        1: [WORK, CARRY, MOVE, MOVE],
+        2: [WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE]
+    };
+
+    constructor(
+        id: number,
+        mode: number,
+        stage: number,
+        source: Source,
+        creepName?: string) {
+
+        super(id, mode, stage, RoleType.harvester, creepName);
         this.source = source;
     }
 
@@ -18,30 +24,36 @@ export class Harvester extends EnergyRole {
         // todo
     }
 
-    public static getBodyForMode(mode: HarvesterMode, level: number): BodyPartConstant[] {
-        if (mode === HarvesterMode.Normal) {
-            return bodyNormal[level];
-        } else {
-            throw new Error('undefined mode');
-        }
+    public getBody(level: number): BodyPartConstant[] {
+        return Harvester.levelBodies[level];
     }
 
     // save and load
 
     public save(): HarvesterMemory {
         return {
-            creepName: this.creepName,
+            id: this.id,
             mode: this.mode,
             source: this.source.id,
             stage: this.stage,
-            type: RoleType.harvester
+            type: this.type,
+            creepName: this.creepName
         };
     }
 
     public static load(memory: HarvesterMemory): Harvester {
-        const creep = Game.creeps[memory.creepName];
         const source = Game.getObjectById(memory.source) as Source;
-        return new Harvester(creep, memory.mode, memory.stage, source);
+        return new Harvester(
+            memory.id,
+            memory.mode,
+            memory.stage,
+            source,
+            memory.creepName
+        );
+    }
+
+    public static create(id: number, source: Source) {
+        return new Harvester(id, 0, 0, source);
     }
 }
 
