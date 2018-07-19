@@ -43,6 +43,7 @@ export abstract class Role {
             } else {
                 this.creepName = undefined;
                 this.creepController = undefined;
+                this.creepRequested = false;
             }
         }
     }

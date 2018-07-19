@@ -1,5 +1,5 @@
-import { RoleModeBody, RoleType, RoleMemory } from "Role";
-import { EnergyRole } from "EnergyRole";
+import { EnergyRole } from 'EnergyRole';
+import { RoleMemory, RoleModeBody, RoleType } from 'Role';
 
 export class Miner extends EnergyRole {
 
@@ -12,8 +12,8 @@ export class Miner extends EnergyRole {
         5: [WORK, WORK, WORK, WORK, WORK, MOVE],
         6: [WORK, WORK, WORK, WORK, WORK, MOVE],
         7: [WORK, WORK, WORK, WORK, WORK, MOVE],
-        8: [WORK, WORK, WORK, WORK, WORK, MOVE],
-    }
+        8: [WORK, WORK, WORK, WORK, WORK, MOVE]
+    };
 
     constructor(
         id: number,
@@ -45,5 +45,5 @@ export class Miner extends EnergyRole {
 }
 
 export interface MinerMemory extends RoleMemory {
-    containerId: string
+    containerId: string;
 }

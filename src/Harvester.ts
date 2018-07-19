@@ -1,6 +1,6 @@
+import { CreepController } from 'CreepController';
 import { EnergyRole } from 'EnergyRole';
 import { RoleMemory, RoleModeBody, RoleType } from 'Role';
-import { CreepController } from 'CreepController';
 
 export class Harvester extends EnergyRole {
     private source: Source;
@@ -13,7 +13,7 @@ export class Harvester extends EnergyRole {
         5: [WORK, CARRY, MOVE, MOVE],
         6: [WORK, CARRY, MOVE, MOVE],
         7: [WORK, CARRY, MOVE, MOVE],
-        8: [WORK, CARRY, MOVE, MOVE],
+        8: [WORK, CARRY, MOVE, MOVE]
     };
 
     constructor(
@@ -29,11 +29,6 @@ export class Harvester extends EnergyRole {
     }
 
     public run(): void {
-        // check if creep is dead if so - set flag to request new creep
-        if (this.creepName && !(this.creepName in Game.creeps)) {
-            this.creepRequested = false;
-            return;
-        }
         // ensure has creepController
         if (!this.creepController)
             return;

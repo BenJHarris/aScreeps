@@ -17,7 +17,7 @@ export class SpawnRequest {
         return {
             jobId: this.jobId,
             body: this.body
-        }
+        };
     }
 
     public static load(srm: SpawnRequestMemory) {
