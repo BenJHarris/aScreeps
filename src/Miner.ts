@@ -1,4 +1,4 @@
-import { RoleModeBody, RoleType } from "Role";
+import { RoleModeBody, RoleType, RoleMemory } from "Role";
 import { EnergyRole } from "EnergyRole";
 
 export class Miner extends EnergyRole {
@@ -20,13 +20,30 @@ export class Miner extends EnergyRole {
         creepRequested: boolean,
         mode: number,
         stage: number,
-        source: Source,
+        container: StructureContainer,
         creepName?: string
     ) {
         super(id, creepRequested, mode, stage, RoleType.harvester, creepName);
+        this.container = container;
     }
 
-    public run():void {}
+    public run(): void {
 
-    private runNormal(): void {}
+    }
+
+    private runNormal(): void {
+
+    }
+
+    public save(): MinerMemory {
+
+    }
+
+    public static load(): Miner {
+
+    }
+}
+
+export interface MinerMemory extends RoleMemory {
+    containerId: string
 }

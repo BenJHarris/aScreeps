@@ -14,6 +14,7 @@ if (Memory.empire === undefined) {
 // This utility uses source maps to get the line numbers and file names of the original, TS source code
 export const loop = ErrorMapper.wrapLoop(() => {
   console.log(`Current game tick is ${Game.time}`);
+  empire = Empire.load(Memory.empire);
   empire.refresh();
   empire.run();
   Memory.empire = empire.save();

@@ -14,4 +14,8 @@ export abstract class EnergyRole extends Role {
     ) {
         super(id, creepRequested, mode, stage, roleType, creepName);
     }
+
+    public refresh(): void {
+        super.refresh();
+    }
 }

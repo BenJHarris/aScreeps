@@ -22,7 +22,9 @@ export abstract class Role {
     }
 
     public hasCreep(): boolean {
-        return this.creepName !== undefined;
+        if (!this.creepName) return false;
+        const creep = Game.creeps[this.creepName];
+        return creep === undefined ? false : true;
     }
 
     public setCreep(creepName: string) {
@@ -33,7 +35,17 @@ export abstract class Role {
     public abstract getBody(level: number): BodyPartConstant[];
     public abstract run(): void;
     public abstract save(): RoleMemory;
-
+    public refresh(): void {
+        if (this.creepName !== undefined) {
+            const creep = Game.creeps[this.creepName];
+            if (creep !== undefined && this.creepController) {
+                this.creepController.refresh();
+            } else {
+                this.creepName = undefined;
+                this.creepController = undefined;
+            }
+        }
+    }
 }
 
 export interface RoleMemory {

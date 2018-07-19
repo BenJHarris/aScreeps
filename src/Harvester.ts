@@ -38,8 +38,6 @@ export class Harvester extends EnergyRole {
         if (!this.creepController)
             return;
 
-        // refresh creepController to get updated creep for this tick
-        this.creepController.refresh();
         if (this.mode === HarvesterMode.Normal) {
             this.runNormal(this.creepController);
         }
@@ -104,6 +102,12 @@ export class Harvester extends EnergyRole {
             source,
             memory.creepName
         );
+    }
+
+    public refresh(): void {
+        super.refresh();
+        // harvester specific refresh
+        this.source = Game.getObjectById(this.source.id) as Source;
     }
 
     public static create(id: number, source: Source) {

@@ -71,11 +71,14 @@ export class Colony {
     }
 
     public refresh(): void {
+        // refresh homeroom and associated data
         this.homeRoom = this.homeRoom.refresh();
         this.level = this.homeRoom.level;
         this.level = this.homeRoom.level;
         this.avilableSpawns = this.homeRoom.availableSpawns;
         this.availableEnergy = this.homeRoom.availableEnergy;
+        // refresh roles
+        _.forEach(this.roles, (r) => r.refresh());
     }
 
     // save and load
