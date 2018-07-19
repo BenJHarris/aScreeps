@@ -1,13 +1,19 @@
 import { EnergyRole } from 'EnergyRole';
 import { RoleMemory, RoleModeBody, RoleType } from 'Role';
+import { CreepController } from 'CreepController';
 
 export class Harvester extends EnergyRole {
     private source: Source;
 
     private static levelBodies: RoleModeBody = {
         1: [WORK, CARRY, MOVE, MOVE],
-        2: [WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE],
-        5: [WORK, CARRY, MOVE, MOVE]
+        2: [WORK, CARRY, MOVE, MOVE],
+        3: [WORK, CARRY, MOVE, MOVE],
+        4: [WORK, CARRY, MOVE, MOVE],
+        5: [WORK, CARRY, MOVE, MOVE],
+        6: [WORK, CARRY, MOVE, MOVE],
+        7: [WORK, CARRY, MOVE, MOVE],
+        8: [WORK, CARRY, MOVE, MOVE],
     };
 
     constructor(
@@ -23,36 +29,49 @@ export class Harvester extends EnergyRole {
     }
 
     public run(): void {
-        if (this.creepController) {
-            if (this.mode === HarvesterMode.Normal) {
-                if (this.stage === HarvesterStage.MoveToSource) {
-                    if (!this.creepController.pos.inRangeTo(this.source, 1)) {
-                        this.creepController.moveTo(this.source.pos);
-                    } else {
-                        this.stage = HarvesterStage.HarvestSource;
-                    }
-                } else if (this.stage === HarvesterStage.HarvestSource) {
-                    if (this.creepController.carry < this.creepController.carryCapacity) {
-                        this.creepController.harvest(this.source);
-                    } else {
-                        this.stage = HarvesterStage.MoveToController;
-                    }
-                } else if (this.stage === HarvesterStage.MoveToController) {
-                    if (!this.creepController.pos.inRangeTo(
-                        this.creepController.room.controller as StructureController, 3)) {
-                        if (this.creepController.room.controller !== undefined) {
-                            this.creepController.moveTo(this.creepController.room.controller.pos);
-                        }
-                    } else {
-                        this.stage = HarvesterStage.UpgradeController;
-                    }
-                } else if (this.stage === HarvesterStage.UpgradeController) {
-                    if (this.creepController.carry > 0) {
-                        this.creepController.upgrade(this.creepController.room.controller as StructureController);
-                    } else {
-                        this.stage = HarvesterStage.MoveToSource;
-                    }
+        // check if creep is dead if so - set flag to request new creep
+        if (this.creepName && !(this.creepName in Game.creeps)) {
+            this.creepRequested = false;
+            return;
+        }
+        // ensure has creepController
+        if (!this.creepController)
+            return;
+
+        // refresh creepController to get updated creep for this tick
+        this.creepController.refresh();
+        if (this.mode === HarvesterMode.Normal) {
+            this.runNormal(this.creepController);
+        }
+    }
+
+    private runNormal(cc: CreepController): void {
+        if (this.stage === HarvesterStage.MoveToSource) {
+            if (!cc.pos.inRangeTo(this.source, 1)) {
+                cc.moveTo(this.source.pos);
+            } else {
+                this.stage = HarvesterStage.HarvestSource;
+            }
+        } else if (this.stage === HarvesterStage.HarvestSource) {
+            if (cc.carry < cc.carryCapacity) {
+                cc.harvest(this.source);
+            } else {
+                this.stage = HarvesterStage.MoveToController;
+            }
+        } else if (this.stage === HarvesterStage.MoveToController) {
+            if (!cc.pos.inRangeTo(
+                cc.room.controller as StructureController, 3)) {
+                if (cc.room.controller !== undefined) {
+                    cc.moveTo(cc.room.controller.pos);
                 }
+            } else {
+                this.stage = HarvesterStage.UpgradeController;
+            }
+        } else if (this.stage === HarvesterStage.UpgradeController) {
+            if (cc.carry > 0) {
+                cc.upgrade(cc.room.controller as StructureController);
+            } else {
+                this.stage = HarvesterStage.MoveToSource;
             }
         }
     }

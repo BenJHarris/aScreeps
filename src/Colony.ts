@@ -2,7 +2,7 @@ import { ColonyMemory } from 'Colony';
 import { Harvester, HarvesterMemory } from 'Harvester';
 import { HomeRoom, HomeRoomMemory } from 'HomeRoom';
 import { Role, RoleMemory, RoleType } from 'Role';
-import { SpawnRequest } from 'SpawnRequest';
+import { SpawnRequest, SpawnRequestMemory } from 'SpawnRequest';
 
 export class Colony {
 
@@ -64,7 +64,7 @@ export class Colony {
             if (!r.hasCreep() && !r.creepRequested) {
                 this.spawnQueue.push(new SpawnRequest(r.id, r.getBody(this.level)));
                 r.creepRequested = true;
-            } else {
+            } else if (r.hasCreep()) {
                 r.run();
             }
         });
@@ -85,7 +85,8 @@ export class Colony {
             currentJobId: this.currentRoleId,
             homeRoom: this.homeRoom.save(),
             id: this.id,
-            roles: _.map(this.roles, (r) => r.save())
+            roles: _.map(this.roles, (r) => r.save()),
+            spawnQueue: _.map(this.spawnQueue, (sr) => sr.save())
         };
     }
 
@@ -98,7 +99,14 @@ export class Colony {
             }
         });
         const homeRoom = HomeRoom.load(colonyMemory.homeRoom);
-        return new Colony(colonyMemory.id, homeRoom, colonyMemory.currentJobId, jobs);
+        const spawnQueue = _.map(colonyMemory.spawnQueue, (sr) => SpawnRequest.load(sr));
+        return new Colony(
+            colonyMemory.id,
+            homeRoom,
+            colonyMemory.currentJobId,
+            jobs,
+            spawnQueue
+        );
     }
 
     public static init(id: number, homeRoom: HomeRoom): Colony {
@@ -181,4 +189,5 @@ export interface ColonyMemory {
     roles: RoleMemory[];
     homeRoom: HomeRoomMemory;
     currentJobId: number;
+    spawnQueue: SpawnRequestMemory[];
 }

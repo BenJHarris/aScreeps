@@ -4,7 +4,6 @@ import { ErrorMapper } from 'utils/ErrorMapper';
 
 // create empire or load from memory
 let empire: Empire;
-delete Memory.empire;
 if (Memory.empire === undefined) {
   empire = Empire.init();
 } else {

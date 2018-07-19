@@ -8,13 +8,11 @@ export abstract class Role {
     protected type: RoleType;
     protected creepName?: string;
     protected creepController?: CreepController;
-    protected creep?: Creep;
 
     constructor(id: number, creepRequested: boolean, mode: number, stage: number, type: RoleType, creepName?: string) {
         if (creepName !== undefined && Game.creeps[creepName] !== undefined) {
-            this.creep = Game.creeps[creepName];
             this.creepName = creepName;
-            this.creepController = new CreepController(Game.creeps[creepName]);
+            this.creepController = new CreepController(creepName);
         }
         this.id = id;
         this.creepRequested = creepRequested;
@@ -24,11 +22,12 @@ export abstract class Role {
     }
 
     public hasCreep(): boolean {
-        return this.creep !== undefined;
+        return this.creepName !== undefined;
     }
 
     public setCreep(creepName: string) {
         this.creepName = creepName;
+        this.creepController = new CreepController(creepName);
     }
 
     public abstract getBody(level: number): BodyPartConstant[];

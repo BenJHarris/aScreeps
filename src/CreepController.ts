@@ -1,17 +1,19 @@
 export class CreepController {
 
     private creep: Creep;
+    private creepName: string;
     public pos: RoomPosition;
     public carry: number;
     public carryCapacity: number;
     public room: Room;
 
-    constructor(creep: Creep) {
-        this.creep = creep;
-        this.pos = creep.pos;
-        this.carry = creep.carry[RESOURCE_ENERGY];
-        this.carryCapacity = creep.carryCapacity;
-        this.room = creep.room;
+    constructor(creepName: string) {
+        this.creepName = creepName;
+        this.creep = Game.creeps[creepName];
+        this.pos = this.creep.pos;
+        this.carry = this.creep.carry[RESOURCE_ENERGY];
+        this.carryCapacity = this.creep.carryCapacity;
+        this.room = this.creep.room;
     }
 
     public moveTo(rp: RoomPosition): CreepMoveReturnCode | ERR_NO_PATH | ERR_INVALID_TARGET | ERR_NOT_FOUND {
@@ -28,5 +30,13 @@ export class CreepController {
 
     public upgrade(target: StructureController): ScreepsReturnCode {
         return this.creep.upgradeController(target);
+    }
+
+    public refresh(): void {
+        this.creep = Game.creeps[this.creepName];
+        this.pos = this.creep.pos;
+        this.carry = this.creep.carry[RESOURCE_ENERGY];
+        this.carryCapacity = this.creep.carryCapacity;
+        this.room = this.creep.room;
     }
 }
