@@ -32,9 +32,19 @@ export abstract class Role {
         this.creepController = new CreepController(creepName);
     }
 
+    public save(): RoleMemory {
+        return {
+            id: this.id,
+            creepRequested: this.creepRequested,
+            type: this.type,
+            creepName: this.creepName,
+            stage: this.stage,
+            mode: this.mode
+        }
+    }
+
     public abstract getBody(level: number): BodyPartConstant[];
     public abstract run(): void;
-    public abstract save(): RoleMemory;
     public refresh(): void {
         if (this.creepName !== undefined) {
             const creep = Game.creeps[this.creepName];

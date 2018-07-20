@@ -76,15 +76,9 @@ export class Harvester extends EnergyRole {
     // save and load
 
     public save(): HarvesterMemory {
-        return {
-            creepName: this.creepName,
-            creepRequested: this.creepRequested,
-            id: this.id,
-            mode: this.mode,
-            source: this.source.id,
-            stage: this.stage,
-            type: this.type
-        };
+        const roleMem = super.save() as HarvesterMemory;
+        roleMem.source = this.source.id;
+        return roleMem;
     }
 
     public static load(memory: HarvesterMemory): Harvester {

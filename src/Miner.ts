@@ -28,7 +28,12 @@ export class Miner extends EnergyRole {
     }
 
     public run(): void {
+        if (!this.creepController)
+            return;
 
+        if (this.mode === MinerMode.Normal) {
+            this.runNormal();
+        }
     }
 
     private runNormal(): void {
@@ -36,12 +41,26 @@ export class Miner extends EnergyRole {
     }
 
     public save(): MinerMemory {
-
+        const roleMem = super.save() as MinerMemory;
+        roleMem.containerId = this.container.id;
+        return roleMem;
     }
 
-    public static load(): Miner {
-
+    public static load(memory: MinerMemory): Miner {
+        const container = Game.getObjectById(memory.containerId) as StructureContainer;
+        return new Miner(
+            memory.id,
+            memory.creepRequested,
+            memory.mode,
+            memory.stage,
+            container,
+            memory.creepName
+        );
     }
+}
+
+export enum MinerMode {
+    Normal = 0
 }
 
 export interface MinerMemory extends RoleMemory {
